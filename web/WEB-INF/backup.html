@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+    <head>
+        <title>Expenses</title>
+
+        <script src="Resource/angularjs/1.4.8/angular.min.js"></script>  
+        <link rel="stylesheet" href="Resource/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="Resource/jquery/1.11.3/jquery.min.js"></script>
+        <script src="Resource/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="Resource/w3/w3.css">
+        <link rel="stylesheet" href="Resource/w3/w3-theme-red.css">
+
+
+        <script>
+            var app = angular.module("myApp", []);
+            app.controller("myCtrl", function ($scope, $http) {
+                console.log("Angular checking is ok");
+
+                $scope.items = [
+                    {Name: "Mobile", Price: "200"},
+                    {Name: "Transport", Price: "500"},
+                    {Name: "Food", Price: "300"},
+                    {Name: "Other", Price: "100"},
+                    {Name: "Payee", Price: "150"}
+                ];
+
+                $scope.addItem = function (item) {
+                    $scope.items.push(item);
+                    $scope.item = {};
+                };
+
+                $scope.totalPrice = function () {
+                    var total = 0;
+                    for (count = 0; count < $scope.items.length; count++) {
+                        total += $scope.items[count].Price * 1;
+                    }
+                    return total;
+                };
+
+                $scope.removeItem = function (index) {
+                    $scope.items.splice(index, 1);
+                };
+                
+                
+                //INSERT INTO DATABASE
+                $scope.setData = {};
+                $scope.addNewData = function () {
+                    //$scope.newData.push($scope.setData);
+                    var a = "http://localhost:8084/Expenses/rest/expensesURL";
+                    $http({
+                        method: "POST",
+                        url: a,
+                        data: $scope.setData,
+                        headers: {'Content-Type': 'application/json'}
+                    }).then(function mySucces(response) {
+                        console.log("Inserted");
+                    }, function myError(response) {
+                        console.log("Doesn't Insert");
+                    });
+                    $scope.setData = {};
+                };
+
+
+
+
+
+                $scope.monthlyitems = [
+                    {Date: "01 Dec 2016", DailyCost: "500", MonthlyBill: "Gas Bill", Amount: "1000"},
+                    {Date: "02 Dec 2016", DailyCost: "600", MonthlyBill: "Water Bill", Amount: "1500"},
+                    {Date: "03 Dec 2016", DailyCost: "700", MonthlyBill: "Electric Bill", Amount: "3000"},
+                    {Date: "04 Dec 2016", DailyCost: "1250", MonthlyBill: "Employee Salary", Amount: "20000"},
+                    {Date: "05 Dec 2016", DailyCost: "1500", MonthlyBill: "Security Bill", Amount: "1000"},
+                    {Date: "06 Dec 2016", DailyCost: "1600", MonthlyBill: "Other Bill", Amount: "300"}
+                ];
+                $scope.addMonthlyItem = function (monthlyitem) {
+                    $scope.monthlyitems.push(monthlyitem);
+                    $scope.monthlyitem = {};
+                };
+
+                /*$scope.dailyCostTotal = function(){
+                 var dailyTotal = 0;
+                 for(count=0;count<$scope.monthlyitems.length;count++){
+                 dailyTotal += $scope.monthlyitems[count].DailyCost*1;
+                 }
+                 return dailyTotal;
+                 }*/
+
+                $scope.monthlyAmount = function () {
+                    var monthlyTotal = 0;
+                    for (count = 0; count < $scope.monthlyitems.length; count++) {
+                        monthlyTotal += $scope.monthlyitems[count].Amount * 1;
+                    }
+                    return monthlyTotal;
+                };
+
+                $scope.removeMonthlyItem = function (index) {
+                    $scope.monthlyitems.splice(index, 1);
+                };
+
+
+
+
+
+                $scope.yearlyItems = [
+                    {Month: "January", mAmount: "30000"},
+                    {Month: "February", mAmount: "25000"},
+                    {Month: "March", mAmount: "45000"},
+                    {Month: "April", mAmount: "35000"},
+                    {Month: "May", mAmount: "20000"},
+                    {Month: "June", mAmount: "21000"},
+                    {Month: "July", mAmount: "34000"},
+                    {Month: "August", mAmount: "34240"},
+                    {Month: "September", mAmount: "30000"},
+                    {Month: "October", mAmount: "50000"},
+                    {Month: "November", mAmount: "29000"}
+                ];
+
+                $scope.addYearlyItem = function (yearlyItem) {
+                    $scope.yearlyItems.push(yearlyItem);
+                    $scope.yearlyItem = {};
+                };
+
+                $scope.yearlyTotalAmount = function () {
+                    var yearlyTotal = 0;
+                    for (count = 0; count < $scope.yearlyItems.length; count++) {
+                        yearlyTotal += $scope.yearlyItems[count].mAmount * 1;
+                    }
+                    return yearlyTotal;
+                };
+
+                $scope.removeYearlyItem = function (index) {
+                    $scope.yearlyItems.splice(index, 1);
+                };
+
+                $scope.today = new Date();
+
+
+                
+
+            });
+        </script>
+
+        <style>
+            /* Remove the navbar's default margin-bottom and rounded borders */ 
+            .navbar {
+                margin-bottom: 0;
+                border-radius: 0;
+                padding: 20px;
+                margin: 0px 0px 0px 0px;
+                color: white;
+                background-color: #14568B;
+            }
+
+            /* Set black background color, white text and some padding */
+            footer {
+                background-color: #337AB7;
+                color: white;
+                padding: 30px;
+                margin: 0px;
+            }
+            .table-hover {
+                /* cursor: pointer; */
+            }
+
+
+            /*FOR SCROLLABLE TABLE*/
+            tbody {
+                display:block;
+                height:200px;
+                overflow:auto;
+            }
+            thead, tbody tr {
+                display:table;
+                width:100%;
+                table-layout:fixed;
+            }
+            thead {
+                width: calc( 100% - 1em )
+            }
+
+            /* h6 */
+            .headingDate{
+                text-align:right;
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <!-- ================== Toolbar ================== -->
+
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>                        
+                    </button>
+                    <a class="navbar-brand" href="#"><img height="140%" width="" src="Resource/img/logo.png"></img></a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                        <!-- <li class="active"><a href="#">Home</a></li> -->
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Projects</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+
+
+
+        <!-- ================== Daily Expenses Table ================== -->
+
+        <div ng-controller="myCtrl">
+
+
+            <div class="container"> 
+
+                <div class="page-header">
+                    <h2>Daily Expenses</h2>
+                </div>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h6 class="headingDate">{{ today | date : "dd MMMM yyyy" }}</h6>
+                    </div>
+                    <div class="panel-body">
+
+                        <label class="control-label col-sm-2" for="ladger">Item Name:</label>
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="ladger" placeholder="Enter item name" ng-model="item.Name"/>
+                            </div>
+                        </div>
+                        <label class="control-label col-sm-2" for="date">Price:</label>
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="date" placeholder="Enter price" ng-model="item.Price"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-default" ng-click="addItem(item)">Add Item</button>
+                            </div>
+                        </div>
+
+                        <!-- <div class="row">
+                                <div class="col-lg-6">
+                                <div class="form-group">
+                                <div class="input-group">
+                                <span class="input-group-addon">Item Name:</span>
+                                <input type="text" class="form-control" ng-model="">
+                                </div>
+                                </div>
+                                </div>
+                                <div class="col-lg-6">
+                                <div class="form-group">
+                                <div class="input-group">
+                                <span class="input-group-addon">Price:</span>
+                                <span class="input-group-addon">Tk</span>
+                                <input type="text" class="form-control" ng-model="">
+                                </div>
+                                </div>
+                                </div>
+                        </div> -->
+
+                        <!-- <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#addDailyModal">Add Item</button> <br/> <br/> -->
+                        <table class="table">
+                            <colgroup>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                            </colgroup>
+                            <thead>
+                                <tr class="bg-info">
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Edit | Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in items">
+                                    <td scope="row">{{$index + 1}}</td>
+                                    <td>{{item.Name}}</td>
+                                    <td>Tk {{item.Price}}</td>
+                                    <td><button type="submit" class="btn btn-info btn-sm" data-toggle="modal" data-target="#addDailyModal">Edit</button> | <button type="submit" class="btn btn-info btn-sm" data-toggle="modal" ng-click="" data-target="#removeDailyModal">Delete</button></td>
+                                </tr>
+                            </tbody>
+                            <thead>
+                                <tr class="bg-info">
+                                    <th></th>
+                                    <th>Grand Total</th>
+                                    <th>Tk {{totalPrice()}}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+
+                        <!-- End panel-body -->
+                    </div>
+                    <!-- End panel -->
+                </div>
+                <!-- End container -->
+            </div>
+
+
+
+
+
+
+            <!-- ================== Monthly Expenses Table ================== -->
+
+            <div class="container"> 
+
+                <div class="page-header">
+                    <h2>Monthly Expenses</h2>
+                </div>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h6 class="headingDate">{{ today | date : "MMMM yyyy" }}</h6>
+                    </div>
+                    <div class="panel-body">
+
+                        <label class="control-label col-sm-2" for="ladger">Monthly Bill:</label>
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="ladger" placeholder="Enter bill name" ng-model="monthlyitem.MonthlyBill"/>
+                            </div>
+                        </div>
+                        <label class="control-label col-sm-2" for="date">Amount:</label>
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="date" placeholder="Enter amount" ng-model="monthlyitem.Amount"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="form-group">  
+                                <button type="submit" class="btn btn-default" ng-click="addMonthlyItem(monthlyitem)">Add Monthly Bill</button>
+                            </div>
+                        </div>
+
+                        <!-- <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#addDailyModal">Add Item</button> <br/> <br/> -->
+                        <table class="table">
+                            <colgroup>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                            </colgroup>
+                            <thead>
+                                <tr class="bg-info">
+                                    <th>#</th>
+                                    <th>Monthly Bill</th>
+                                    <th>Amount</th>
+                                    <th>Daily Total</th>
+                                    <th>Grand Total</th>
+                                    <th>Edit | Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="monthlyitem in monthlyitems">
+                                    <td scope="row">{{$index + 1}}</td>
+                                    <td>{{monthlyitem.MonthlyBill}}</td>
+                                    <td>{{monthlyitem.Amount}}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><button type="submit" class="btn btn-info btn-sm" data-toggle="modal" data-target="#addDailyModal">Edit</button> | <button type="submit" class="btn btn-info btn-sm" ng-click="removeMonthlyItem($index)" data-toggle="modal" data-target="#">Delete</button></td>
+                                </tr>
+                            </tbody>
+                            <thead>
+                                <tr class="bg-info">
+                                    <th></th>
+                                    <th></th>
+                                    <th>Tk {{monthlyAmount()}}</th>
+                                    <th>Tk {{totalPrice()}}</th>
+                                    <th>Tk {{monthlyAmount() + totalPrice()}}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+
+                        <!-- End panel-body -->
+                    </div>
+                    <!-- End panel -->
+                </div>
+                <!-- End container -->
+            </div>
+
+
+
+
+
+
+            <!-- ================== Yearly Expenses Table ================== -->
+
+            <div class="container"> 
+
+                <div class="page-header">
+                    <h2>Yearly Expenses</h2>
+                </div>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h6 class="headingDate">{{ today | date : "yyyy" }}</h6>
+                    </div>
+                    <div class="panel-body">
+
+                        <label class="control-label col-sm-2" for="ladger">Month Name:</label>
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="ladger" placeholder="Enter month name" ng-model="yearlyItem.Month"/>
+                            </div>
+                        </div>
+                        <label class="control-label col-sm-2" for="date">Amount:</label>
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="date" placeholder="Enter amount" ng-model="yearlyItem.mAmount"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-default" ng-click="addYearlyItem(yearlyItem)">Add Month</button>
+                            </div>
+                        </div>
+
+                        <!-- <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#addDailyModal">Add Item</button> <br/> <br/> -->
+                        <table class="table">
+                            <colgroup>
+                                <col>
+                                <col>
+                                <col>
+                                <col>
+                            </colgroup>
+                            <thead>
+                                <tr class="bg-info">
+                                    <th>#</th>
+                                    <th>Month</th>
+                                    <th>Amount</th>
+                                    <th>Edit | Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="yearlyItem in yearlyItems">
+                                    <td scope="row">{{$index + 1}}</td>
+                                    <td>{{yearlyItem.Month}}</td>
+                                    <td>Tk {{yearlyItem.mAmount}}</td>
+                                    <td><button type="submit" class="btn btn-info btn-sm" data-toggle="modal" data-target="#addDailyModal">Edit</button> | <button type="submit" class="btn btn-info btn-sm" data-toggle="modal" data-target="#" ng-click="removeYearlyItem(yearlyItem)">Delete</button></td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">{{$index + 1}}</td>
+                                    <td>{{ today | date : "MMMM yyyy" }}</td>
+                                    <td>Tk {{monthlyAmount() + totalPrice()}}</td>
+                                    <td><button type="submit" class="btn btn-info btn-sm" data-toggle="modal" data-target="#addDailyModal">Edit</button> | <button type="submit" class="btn btn-info btn-sm" data-toggle="modal" data-target="#" ng-click="removeYearlyItem(yearlyItem)">Delete</button></td>
+                                </tr>
+                            </tbody>
+                            <thead>
+                                <tr class="bg-info">
+                                    <th></th>
+                                    <th>Total</th>
+                                    <th>Tk {{yearlyTotalAmount() + monthlyAmount() + totalPrice()}}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+
+                        <!-- End panel-body -->
+                    </div>
+                    <!-- End panel -->
+                </div>
+                <!-- End container -->
+            </div>
+
+
+
+
+
+            <!-- ---------- Add Modal ---------- -->
+
+            <div class="container">			
+                <!-- Modal -->
+                <div class="modal fade" id="addDailyModal" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Add New Item</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-2" for="item">Item:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" ng-model="item.Name" id="item" placeholder="Enter new item">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-2" for="cost">Cost:</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" ng-model="item.Price" id="cost" placeholder="Enter cost">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-default" ng-click="addItem(item)" data-dismiss="modal">Yes</button>
+                                <button type="submit" class="btn btn-default" data-dismiss="modal">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---------- Delete Modal ---------- -->
+
+            <div class="container">
+                <!-- Modal -->
+                <div class="modal fade" id="removeDailyModal" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Are you sure?</h4>
+                            </div>
+                            <div class="modal-body">
+                                You are going to remove <strong class="w3-text-theme">{{items.Name}}</strong>. This information ...
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-default" ng-click="removeItem($index)" data-dismiss="modal">Yes</button>
+                                <button type="submit" class="btn btn-default" data-dismiss="modal">No</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- End ng-controller -->
+        </div>
+
+
+        <!-- ================== Footer ================== -->
+
+        <footer class="container-fluid text-center">
+            <p>Courtesy by Mustofa Kamal</p>
+        </footer>
+
+
+
+    </body>
+</html>
